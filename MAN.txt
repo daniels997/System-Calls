@@ -1,0 +1,53 @@
+.TH Daniel Shin
+.SH Name
+	P1: System Calls
+.SH Synopsis
+	The goal of this project is to implement a system call in the VM as well as implement a library
+	to invoke the system call. The project works with log levels along with harness functions to
+	verify the security of the system calls from the system library.
+.SH Description
+	The first objective of the project was to implement a kernel-wide process log level. To do so,
+	here were the steps taken:
+
+	1. Set the System Call Number
+	From the reference below, the first step of setting the system call number had to have been done
+	in the directory arch/x86/entry/syscalls/ and finally the syscall_64.tbl file. It was said to place
+	an entry below one of the common entries and I decided to list the calls at the bottom at 435-437.
+	3 system calls were made to handle all the library functions:
+	dshin_call1, dshin_call2, and dshin_call3
+
+	2. Declare the System Call Function Prototype
+	Declaring the prtotype had to have been done in the /include/linux directory and in the syscalls.h 
+	file and the reference explains that the asmlinkage had to be placed before the #endif. The prototypes
+	given in the specs were used as well as the parameters. 
+
+	3. Implement the System Call Function
+	As the prototypes were declared in include/linux/syscalls.h, an implementation is required and is done
+	in kernel/sys.c and as the reference states, a SYSCALL_DEFINE macro needs to be used in the implementation
+	and the macros that I used were SYSCALL_DEFINE0 for dshin_call1, SYSCALL_DEFINE1 for dshin_call2, and 
+	SYSCALL_DEFINE2 for dshin_call3. The implementation can be seen in the diff file but to recap, it ensured
+	that any process can read the process log level, any process could send a process log to the kernel, a 
+	superuser may only write the process log level, handles messaging along with the log levels.
+
+	To ensure that the system-wide process log level was initialized to zero (0), a file had to be found to
+	initialize a variable to 0 which would hold the log level value. this was done in the kernel directory 
+	in the file cpu.c as it holds the cpu state.
+
+	For the creation of the static library, a header file process_log.h was created to define all the level
+	symbols and the prototypes of the library functions as well as the harness functions. A source file with
+	extension .c was used to implement all the library and harness functions which the purpose of them were
+	described in the specs. The implementations for them can be seen in the diff file. Afterwards, the 
+	process_log directory was tarred and zipped using tar zcvf.
+.SH TESTING
+	Testing was done in the home directory with the files in process_log.tar.gz and the test files given in the
+	src folder in the files tab on canvas were then uploaded through wsl and sftp into the home directory and 
+	were tested with g++ and gcc depending on file type (cpp or c).
+.SH BUGS
+	For certain tests, the harness test seems to restart the VM.
+.SH LINK
+	https://youtu.be/d20dYnepXs4
+.SH REFERENCES/CITATIONS
+	https://williamthegrey.wordpress.com/2014/05/18/add-your-own-system-calls-to-the-linux-kernel/
+.SH AUTHOR
+	Daniel Shin
+
